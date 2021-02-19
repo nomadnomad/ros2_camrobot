@@ -34,3 +34,8 @@
 # VSCode
 .vscode
 .editorconfig
+
+# Output
+log/
+install/
+build/
