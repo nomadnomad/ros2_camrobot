@@ -1,5 +1,5 @@
 #include <pigpiod_if2.h>
-#include "../include/moter_controller/dc_motor.hpp"
+#include "../include/motor_controller/dc_motor.hpp"
 
 DcMotor::DcMotor(int pi, int pwm, int in1, int in2) {
   this->pi = pi;

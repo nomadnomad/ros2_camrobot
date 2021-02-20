@@ -1,5 +1,5 @@
 #include <rclcpp/rclcpp.hpp>
-#include "../include/moter_controller/test_controller.hpp"
+#include "../include/motor_controller/test_controller.hpp"
 
 int main(int argc, char * argv[]){
   rclcpp::init(argc, argv);

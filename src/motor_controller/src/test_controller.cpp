@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp/qos.hpp>
 #include <pigpiod_if2.h>
-#include "../include/moter_controller/test_controller.hpp"
+#include "../include/motor_controller/test_controller.hpp"
 
 TestController::TestController(
   const rclcpp::NodeOptions& options
