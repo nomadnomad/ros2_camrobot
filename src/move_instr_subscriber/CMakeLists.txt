@@ -18,7 +18,32 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_lifecycle REQUIRED)
 find_package(example_interfaces REQUIRED)
+
+add_executable(move_instr_subscriber
+  src/move_instr_subscriber_main.cpp
+  src/move_instr_subscriber.cpp
+  src/dc_motor.cpp
+)
+
+ament_target_dependencies(move_instr_subscriber
+  rclcpp
+  rclcpp_lifecycle
+  example_interfaces
+)
+
+install(TARGETS
+  move_instr_subscriber
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+target_compile_options(move_instr_subscriber
+  PUBLIC -Wall -pthread
+)
+target_link_libraries(move_instr_subscriber
+  pigpiod_if2
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

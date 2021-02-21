@@ -5,7 +5,7 @@
 #include "../include/move_instr_subscriber/move_instr_subscriber.hpp"
 
 MoveInstrSubscriber::MoveInstrSubscriber(
-    const rclcpp::NodeOptions& options = rclcpp::NodeOptions()
+    const rclcpp::NodeOptions& options
 ): MoveInstrSubscriber("", options){}
 
 MoveInstrSubscriber::MoveInstrSubscriber(
