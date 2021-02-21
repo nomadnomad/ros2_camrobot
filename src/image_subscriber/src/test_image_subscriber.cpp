@@ -1,5 +1,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <lifecycle_msgs/msg/state.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp/qos.hpp>
 #include "../include/image_subscriber/test_image_subscriber.hpp"
@@ -38,13 +40,16 @@ void TestImageSubscriber::subscribe_image(const sensor_msgs::msg::Image::SharedP
       msg->header.frame_id.c_str(),
       msg->encoding.c_str());
     
-    cv::Mat image = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::RGB8)->image;
+    cv::Mat image = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+    cv::imshow("image", image);
+    cv::waitKey(1);
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 TestImageSubscriber::on_configure(const rclcpp_lifecycle::State &)
 {
     RCLCPP_INFO(this->get_logger(), "on_configure");
+
     init();
 
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
@@ -78,6 +83,8 @@ rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 TestImageSubscriber::on_shutdown(const rclcpp_lifecycle::State &)
 {
     RCLCPP_INFO(get_logger(), "on_shutdown");
+
+    cv::destroyWindow("image");
 
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
