@@ -8,7 +8,6 @@ DcMotor::DcMotor(int pi, int pwm, int in1, int in2) {
   this->in2 = in2;
 }
 
-/*
 void DcMotor::init() {
     set_mode(pi, pwm, PI_OUTPUT);
     set_PWM_dutycycle(pi, pwm, 0);
@@ -19,7 +18,7 @@ void DcMotor::init() {
     set_mode(pi, in2, PI_OUTPUT);
     gpio_write(pi, in2, 0);
 }
-*/
+/*
 int DcMotor::init() {
     int ret;
     ret = set_mode(pi, pwm, PI_OUTPUT);
@@ -37,6 +36,7 @@ int DcMotor::init() {
     ret = gpio_write(pi, in2, 0);
     if (ret != 0) return ret;
 }
+*/
 
 void DcMotor::shutdown() {
     stop();
