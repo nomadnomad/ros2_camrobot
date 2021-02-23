@@ -8,6 +8,11 @@ DcMotor::DcMotor(int pi, int pwm, int in1, int in2) {
   this->in2 = in2;
 }
 
+DcMotor::~DcMotor()
+{
+    shutdown();
+}
+
 /*
 void DcMotor::init() {
     set_mode(pi, pwm, PI_OUTPUT);
