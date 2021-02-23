@@ -3,7 +3,7 @@
 class DcMotor {
   public:
     DcMotor(int pi, int pwm, int in1, int in2);
-    void init(void);
+    int init(void);
     void shutdown(void);
     void set_pwm(unsigned duty, unsigned range, unsigned freq);
     void forward(void);
