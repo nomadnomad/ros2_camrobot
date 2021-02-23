@@ -60,13 +60,13 @@ void DcMotor::set_pwm(unsigned duty, unsigned range, unsigned freq) {
 }
 
 void DcMotor::forward() {
-    gpio_write(pi, in1, 1);
-    gpio_write(pi, in2, 0);
+    gpio_write(pi, in1, 0);
+    gpio_write(pi, in2, 1);
 }
 
 void DcMotor::back() {
-    gpio_write(pi, in1, 0);
-    gpio_write(pi, in2, 1);
+    gpio_write(pi, in1, 1);
+    gpio_write(pi, in2, 0);
 }
 
 void DcMotor::brake() {
