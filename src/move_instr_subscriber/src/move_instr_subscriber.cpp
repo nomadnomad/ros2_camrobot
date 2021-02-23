@@ -21,41 +21,50 @@ MoveInstrSubscriber::MoveInstrSubscriber(
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 MoveInstrSubscriber::on_configure(const rclcpp_lifecycle::State &) {
+    RCLCPP_INFO(get_logger(), "on_configure start");
 
-    init_subscription();
-    init_gpio();
+    if (init_gpio() != 0) {
+        RCLCPP_INFO(get_logger(), "on_configure failure");
+        return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
+    }
     init_motor();
+    init_subscription();
 
-
-    motorA->set_pwm(50, 256, 1000);
-    motorB->set_pwm(50, 256, 1000);
-    forward();
-
+    RCLCPP_INFO(get_logger(), "on_configure normal end");
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 MoveInstrSubscriber::on_activate(const rclcpp_lifecycle::State &) {
+    RCLCPP_INFO(get_logger(), "on_activate start");
 
+    RCLCPP_INFO(get_logger(), "on_activate normal end");
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 MoveInstrSubscriber::on_deactivate(const rclcpp_lifecycle::State &) {
+    RCLCPP_INFO(get_logger(), "on_deactivate start");
 
+    RCLCPP_INFO(get_logger(), "on_deactivate normal end");
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 MoveInstrSubscriber::on_cleanup(const rclcpp_lifecycle::State &) {
+    RCLCPP_INFO(get_logger(), "on_cleanup start");
 
+    RCLCPP_INFO(get_logger(), "on_cleanup normal end");
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
 MoveInstrSubscriber::on_shutdown(const rclcpp_lifecycle::State &) {
+    RCLCPP_INFO(get_logger(), "on_shutdown start");
+
     finish();
 
+    RCLCPP_INFO(get_logger(), "on_shutdown normal end");
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
@@ -79,18 +88,22 @@ int MoveInstrSubscriber::init_gpio(void) {
 }
 
 void MoveInstrSubscriber::init_motor(void) {
-    motorA.reset(new DcMotor(pi, APwm, AIn1, AIn2));
-    int initResultMotorA = motorA->init();
-    RCLCPP_INFO(get_logger(), "init MotorA result[%d]", initResultMotorA);
+    motorR.reset(new DcMotor(pi, APwm, AIn1, AIn2));
+    int initResultMotorR = motorR->init();
+    RCLCPP_INFO(get_logger(), "init MotorR result[%d]", initResultMotorR);
+    motorR->stop();
+    motorR->set_pwm(50, 256, 1000);
 
-    motorB.reset(new DcMotor(pi, BPwm, BIn1, BIn2));
-    int initResultMotorB = motorB->init();
-    RCLCPP_INFO(get_logger(), "init MotorB result[%d]", initResultMotorB);
+    motorL.reset(new DcMotor(pi, BPwm, BIn1, BIn2));
+    int initResultMotorL = motorL->init();
+    RCLCPP_INFO(get_logger(), "init MotorL result[%d]", initResultMotorL);
+    motorL->stop();
+    motorL->set_pwm(50, 256, 1000);
 }
 
 void MoveInstrSubscriber::finish(void) {
-    motorA->shutdown();
-    motorB->shutdown();
+    motorR->shutdown();
+    motorL->shutdown();
 }
 
 void MoveInstrSubscriber::subscribe_move_instr(const example_interfaces::msg::String::SharedPtr instr) {
@@ -106,15 +119,36 @@ void MoveInstrSubscriber::subscribe_move_instr(const example_interfaces::msg::St
         forward();
     } else if (instr->data == "stop") {
         stop();
+    } else if (instr->data == "back") {
+        back();
+    } else if (instr->data == "turn_right") {
+        turn_right();
+    } else if (instr->data == "turn_left") {
+        turn_left();
     }
 }
 
 void MoveInstrSubscriber::forward(void) {
-    motorA->forward();
-    motorB->back();
+    motorR->forward();
+    motorL->back();
 }
 
-void MoveInstrSubscriber::stop() {
-    motorA->stop();
-    motorB->stop();
+void MoveInstrSubscriber::back(void) {
+    motorR->back();
+    motorL->forward();
+}
+
+void MoveInstrSubscriber::stop(void) {
+    motorR->stop();
+    motorL->stop();
+}
+
+void MoveInstrSubscriber::turn_right(void) {
+    motorR->back();
+    motorL->back();
+}
+
+void MoveInstrSubscriber::turn_left(void) {
+    motorR->forward();
+    motorL->forward();
 }

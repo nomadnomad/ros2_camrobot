@@ -1,8 +1,11 @@
+#include <rclcpp/rclcpp.hpp>
 #include <pigpiod_if2.h>
+#include <string.h>
 #include "../include/move_instr_subscriber/dc_motor.hpp"
 
 DcMotor::DcMotor(int pi, int pwm, int in1, int in2) {
   this->pi = pi;
+  RCLCPP_INFO(rclcpp::get_logger("dc_motor"), "constructor");
   this->pwm = pwm;
   this->in1 = in1;
   this->in2 = in2;

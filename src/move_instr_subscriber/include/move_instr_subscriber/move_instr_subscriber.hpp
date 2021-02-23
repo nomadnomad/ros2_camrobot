@@ -17,8 +17,8 @@ class MoveInstrSubscriber : public rclcpp_lifecycle::LifecycleNode {
     const int BIn2 = 19;
     rclcpp::Subscription<example_interfaces::msg::String>::SharedPtr subscription;
     int pi;
-    std::unique_ptr<DcMotor> motorA;
-    std::unique_ptr<DcMotor> motorB;
+    std::unique_ptr<DcMotor> motorR;
+    std::unique_ptr<DcMotor> motorL;
 
     void subscribe_move_instr(const example_interfaces::msg::String::SharedPtr instr);
     void init_subscription(void);
@@ -27,7 +27,10 @@ class MoveInstrSubscriber : public rclcpp_lifecycle::LifecycleNode {
     void finish(void);
     
     void forward(void);
+    void back(void);
     void stop(void);
+    void turn_right(void);
+    void turn_left(void);
 
   public:
     MoveInstrSubscriber(
