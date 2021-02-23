@@ -95,13 +95,13 @@ void MoveInstrSubscriber::subscribe_move_instr(const example_interfaces::msg::St
       instr->data.c_str());
 
     if (instr->data == "forward") {
-        // TODO        
+        forward();
     } else if (instr->data == "stop") {
-        // TODO        
+        stop();
     }
 }
 
-void MoveInstrSubscriber::foward(void) {
+void MoveInstrSubscriber::forward(void) {
     motorA->forward();
     motorB->back();
 }

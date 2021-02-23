@@ -26,7 +26,7 @@ class MoveInstrSubscriber : public rclcpp_lifecycle::LifecycleNode {
     void init_motor(void);
     void finish(void);
     
-    void foward(void);
+    void forward(void);
     void stop(void);
 
   public:
