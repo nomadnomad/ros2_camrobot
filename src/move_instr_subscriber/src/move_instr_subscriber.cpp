@@ -80,10 +80,12 @@ int MoveInstrSubscriber::init_gpio(void) {
 
 void MoveInstrSubscriber::init_motor(void) {
     motorA.reset(new DcMotor(pi, APwm, AIn1, AIn2));
-    motorA->init();
+    int initResultMotorA = motorA->init();
+    RCLCPP_INFO(get_logger(), "init MotorA result[%d]", initResultMotorA);
 
     motorB.reset(new DcMotor(pi, BPwm, BIn1, BIn2));
-    motorB->init();
+    int initResultMotorB = motorB->init();
+    RCLCPP_INFO(get_logger(), "init MotorB result[%d]", initResultMotorB);
 }
 
 void MoveInstrSubscriber::finish(void) {
