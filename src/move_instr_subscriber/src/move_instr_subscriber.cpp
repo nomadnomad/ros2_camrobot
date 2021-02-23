@@ -129,12 +129,12 @@ void MoveInstrSubscriber::subscribe_move_instr(const example_interfaces::msg::St
 }
 
 void MoveInstrSubscriber::forward(void) {
-    motorR->back();
+    motorR->forward();
     motorL->forward();
 }
 
 void MoveInstrSubscriber::back(void) {
-    motorR->forward();
+    motorR->back();
     motorL->back();
 }
 
