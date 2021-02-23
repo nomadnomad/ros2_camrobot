@@ -24,6 +24,12 @@ MoveInstrSubscriber::on_configure(const rclcpp_lifecycle::State &) {
 
     init_subscription();
     init_gpio();
+    init_motor();
+
+
+    motorA->set_pwm(50, 256, 1000);
+    motorB->set_pwm(50, 256, 1000);
+    forward();
 
     return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
