@@ -130,12 +130,12 @@ void MoveInstrSubscriber::subscribe_move_instr(const example_interfaces::msg::St
 
 void MoveInstrSubscriber::forward(void) {
     motorR->forward();
-    motorL->back();
+    motorL->forward();
 }
 
 void MoveInstrSubscriber::back(void) {
     motorR->back();
-    motorL->forward();
+    motorL->back();
 }
 
 void MoveInstrSubscriber::stop(void) {
@@ -145,10 +145,10 @@ void MoveInstrSubscriber::stop(void) {
 
 void MoveInstrSubscriber::turn_right(void) {
     motorR->back();
-    motorL->back();
+    motorL->forward();
 }
 
 void MoveInstrSubscriber::turn_left(void) {
     motorR->forward();
-    motorL->forward();
+    motorL->back();
 }
