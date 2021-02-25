@@ -42,7 +42,7 @@ void UltrasonicSensor::publish_ultrasonic_sensor() {
 
   auto duration = end - start;
   auto usec = std::chrono::duration_cast<std::chrono::microseconds>(duration).count();
-  int distance = usec * 34000 / 2;
+  int distance = (usec / 1000000.0) * 34000.0 / 2.0;
 
   RCLCPP_INFO(get_logger(), "publish_ultrasonic_sensor distance[%dcm]", distance);
 
