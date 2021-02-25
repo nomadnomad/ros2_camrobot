@@ -2,6 +2,7 @@
 #include <lifecycle_msgs/msg/state.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/tracking.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp/qos.hpp>
 #include "../include/image_subscriber/test_image_subscriber.hpp"
@@ -12,10 +13,11 @@ TestImageSubscriber::TestImageSubscriber(
 : TestImageSubscriber("", options){}
 
 TestImageSubscriber::TestImageSubscriber(
-   const std::string& node_name,
+   const std::string& namespace_,
    const rclcpp::NodeOptions&
 )
-: rclcpp_lifecycle::LifecycleNode(node_name,
+: rclcpp_lifecycle::LifecycleNode("test_image_subs", 
+      namespace_,
       rclcpp::NodeOptions().use_intra_process_comms(false)) {
 
     RCLCPP_INFO(get_logger(), "constructor");
@@ -23,6 +25,8 @@ TestImageSubscriber::TestImageSubscriber(
 
 void TestImageSubscriber::init(void) {
   RCLCPP_INFO(get_logger(), "init");
+  captured = false;
+  trackerKCF = cv::TrackerKCF::create();
   subscription = create_subscription<sensor_msgs::msg::Image>(
     "image_raw",
     rclcpp::QoS(10),
@@ -34,15 +38,58 @@ void TestImageSubscriber::subscribe_image(const sensor_msgs::msg::Image::SharedP
     if (this->get_current_state().id() != lifecycle_msgs::msg::State::PRIMARY_STATE_ACTIVE) {
       return;
     }
+    /*
     RCLCPP_INFO(get_logger(), "current_state[%d][%s] subscribe_image frame_id[%s] encoding[%s]",
       this->get_current_state().id(),
       this->get_current_state().label().c_str(), 
       msg->header.frame_id.c_str(),
       msg->encoding.c_str());
+    */
     
-    cv::Mat image = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
-    cv::imshow("image", image);
-    cv::waitKey(1);
+    if (!captured) {
+      cv::Mat image = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+      cv::Rect2d roi = selectROI("tracker", image);
+      cv::Mat target(image, roi);
+      cv::imwrite("/home/t-matsuo/target.jpeg", target);
+      RCLCPP_INFO(get_logger(), "(x, y, width, height) = (%lf, %lf, %lf, %lf)", roi.x, roi.y, roi.width, roi.height);
+
+      // Trackerの初期化
+      trackerKCF->init(image, roi);
+
+      // Trackerの色
+      colorkcf = cv::Scalar(0, 255, 0);
+      colorkcf2  = cv::Scalar(0, 255, 255);
+      
+      //cv::imshow("image", image);
+      cv::waitKey(1);
+      captured = true;
+      prevRoi = roi;
+      targetSize = roi.size();
+    } else {
+      cv::Mat image = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+      
+      // 更新
+      cv::Rect2d roi;
+      trackerKCF->update(image, roi);
+      RCLCPP_INFO(get_logger(), "(x, y, width, height) = (%lf, %lf, %lf, %lf)", roi.x, roi.y, roi.width, roi.height);
+
+      // 矩形で囲む
+      cv::rectangle(image, roi, colorkcf, 1, 1);
+
+      cv::putText(image, "- KCF", cv::Point(5, 20), cv::FONT_HERSHEY_SIMPLEX, .5, colorkcf, 1, 16);
+
+      cv::imshow("tracker", image);
+
+      //cv::Mat image = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8)->image;
+      //cv::imshow("image", image);
+      cv::waitKey(1);
+      prevRoi = roi;
+    }
+    
+}
+
+cv::Point2d TestImageSubscriber::rect_center(cv::Rect2d rect) {
+  return cv::Point2d(rect.x + rect.width / 2.0, rect.y + rect.height / 2.0);
 }
 
 rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn

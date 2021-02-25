@@ -9,7 +9,7 @@ int main(int argc, char * argv[]){
   rclcpp::executors::SingleThreadedExecutor exe;
 
   std::shared_ptr<TestImageSubscriber> node = 
-    std::make_shared<TestImageSubscriber>("test_image_sub");
+    std::make_shared<TestImageSubscriber>();
 
   RCLCPP_INFO(node->get_logger(), "インスタンス生成");
 
