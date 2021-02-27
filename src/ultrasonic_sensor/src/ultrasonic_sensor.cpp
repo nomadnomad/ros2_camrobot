@@ -88,7 +88,7 @@ bool UltrasonicSensor::init() {
       rclcpp::QoS(10));
 
   ultrasonic_timer_ = create_wall_timer(
-    1000ms, 
+    100ms, 
     std::bind(&UltrasonicSensor::publish_ultrasonic_sensor, this));
   ultrasonic_timer_->cancel();
 
