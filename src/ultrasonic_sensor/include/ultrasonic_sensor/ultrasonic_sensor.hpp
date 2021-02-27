@@ -1,16 +1,10 @@
+#include <chrono> 
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <example_interfaces/msg/int32.hpp>
+#include "ultrasonic_sensor_msgs/msg/ultrasonic.hpp"
 
 class UltrasonicSensor : public rclcpp_lifecycle::LifecycleNode {
-  private:
-    rclcpp::Publisher<example_interfaces::msg::Int32>::SharedPtr publisher_;
-    rclcpp::TimerBase::SharedPtr ultrasonic_timer_;
-    int pi;
-    const int GPIO_TRIG = 12;
-    const int GPIO_ECHO = 6;
-
-    void publish_ultrasonic_sensor();  
-    double sensor_distance();
+  using SensorTuple = std::tuple<std::chrono::system_clock::time_point, double>;
 
   public:
     UltrasonicSensor(
@@ -35,4 +29,19 @@ class UltrasonicSensor : public rclcpp_lifecycle::LifecycleNode {
 
     rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
     on_shutdown(const rclcpp_lifecycle::State &);
+
+  private:
+    rclcpp_lifecycle::LifecyclePublisher<ultrasonic_sensor_msgs::msg::Ultrasonic>::SharedPtr publisher_;
+    rclcpp::TimerBase::SharedPtr ultrasonic_timer_;
+    int pi;
+    const int GPIO_TRIG = 12;
+    const int GPIO_ECHO = 6;
+
+    void publish_ultrasonic_sensor();  
+    double sensor_distance();
+    bool init();
+    std::chrono::system_clock::time_point readWhileEchoOff();
+    SensorTuple dist_ave();
+    std::shared_ptr<ultrasonic_sensor_msgs::msg::Ultrasonic> create_data(
+        UltrasonicSensor::SensorTuple& sensorTuple);
 };

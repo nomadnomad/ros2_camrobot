@@ -20,6 +20,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(example_interfaces REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(ultrasonic_sensor_msgs REQUIRED)
 
 add_executable(ultrasonic_sensor
   src/ultrasonic_sensor.cpp
@@ -30,6 +32,8 @@ ament_target_dependencies(ultrasonic_sensor
   rclcpp
   rclcpp_lifecycle
   example_interfaces
+  std_msgs
+  ultrasonic_sensor_msgs
 )
 
 install(TARGETS
