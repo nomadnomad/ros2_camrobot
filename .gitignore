@@ -39,3 +39,6 @@
 log/
 install/
 build/
+
+# ros2_camrobot(venv)
+ros2_camrobot/
